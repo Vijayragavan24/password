@@ -1,0 +1,329 @@
+{% extends "base.html" %}
+
+{% block title %}Register - Password Detection Tool{% endblock %}
+
+{% block content %}
+<div class="auth-page" style="min-height: 100vh; display: flex; align-items: center; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-6 col-md-8">
+                <div class="auth-card" data-aos="zoom-in">
+                    <div class="auth-header text-center mb-4">
+                        <i class="fas fa-user-plus fa-3x text-primary mb-3"></i>
+                        <h2 class="mb-2">Create Account</h2>
+                        <p class="text-muted">Join us to secure your passwords</p>
+                    </div>
+
+                    <form id="registerForm" method="POST">
+                        <!-- Username -->
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Username</label>
+                            <input type="text" class="form-control form-control-lg" id="username" name="username" placeholder="Choose a username" required>
+                            <small class="form-text text-muted">3-50 characters, alphanumeric</small>
+                        </div>
+
+                        <!-- Email -->
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email Address</label>
+                            <input type="email" class="form-control form-control-lg" id="email" name="email" placeholder="your@email.com" required>
+                        </div>
+
+                        <!-- Password -->
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <div style="position: relative;">
+                                <input type="password" class="form-control form-control-lg" id="password" name="password" placeholder="Enter a strong password" required>
+                                <button 
+                                    type="button" 
+                                    id="togglePasswordBtn" 
+                                    class="toggle-password-btn"
+                                    title="Show/Hide password"
+                                    style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #667eea; cursor: pointer; font-size: 1.1rem; display: none; padding: 0.5rem;"
+                                >
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                            
+                            <!-- Password Strength Meter -->
+                            <div class="password-strength mt-2">
+                                <div class="strength-bar">
+                                    <div id="strengthBar" class="strength-fill" style="width: 0%;"></div>
+                                </div>
+                                <small id="strengthText" class="form-text text-muted">Password strength: Weak</small>
+                            </div>
+                        </div>
+
+                        <!-- Confirm Password -->
+                        <div class="mb-3">
+                            <label for="confirmPassword" class="form-label">Confirm Password</label>
+                            <div style="position: relative;">
+                                <input type="password" class="form-control form-control-lg" id="confirmPassword" name="confirm_password" placeholder="Re-enter password" required>
+                                <button 
+                                    type="button" 
+                                    id="toggleConfirmPasswordBtn" 
+                                    class="toggle-password-btn"
+                                    title="Show/Hide password"
+                                    style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #667eea; cursor: pointer; font-size: 1.1rem; display: none; padding: 0.5rem;"
+                                >
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Security Questions Section -->
+                        <hr class="my-4">
+                        <h5 class="mb-3"><i class="fas fa-shield-alt"></i> Security Questions</h5>
+
+                        <!-- Mother's Name -->
+                        <div class="mb-3">
+                            <label for="motherName" class="form-label">What is your mother's name?</label>
+                            <input type="text" class="form-control form-control-lg" id="motherName" name="mother_name" placeholder="Your mother's name" required>
+                            <small class="form-text text-muted">Used for password recovery</small>
+                        </div>
+
+                        <!-- Date of Birth -->
+                        <div class="mb-3">
+                            <label for="dob" class="form-label">What is your date of birth?</label>
+                            <input type="date" class="form-control form-control-lg" id="dob" name="date_of_birth" required>
+                        </div>
+
+                        <!-- Favorite Color -->
+                        <div class="mb-3">
+                            <label for="favoriteColor" class="form-label">What is your favorite color?</label>
+                            <input type="text" class="form-control form-control-lg" id="favoriteColor" name="favorite_color" placeholder="Your favorite color" required>
+                        </div>
+
+                        <!-- Terms & Conditions -->
+                        <div class="mb-4">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="terms" name="terms" required>
+                                <label class="form-check-label" for="terms">
+                                    I agree to the <a href="#">Terms and Conditions</a>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button type="submit" class="btn btn-primary btn-lg w-100 mb-3">
+                            <i class="fas fa-check"></i> Create Account
+                        </button>
+
+                        <!-- Login Link -->
+                        <p class="text-center text-muted">
+                            Already have an account? <a href="{{ url_for('login') }}" class="text-primary fw-bold">Login here</a>
+                        </p>
+                    </form>
+
+                    <!-- Alert Messages -->
+                    <div id="alertContainer"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('registerForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const formData = {
+        username: document.getElementById('username').value,
+        email: document.getElementById('email').value,
+        password: document.getElementById('password').value,
+        confirm_password: document.getElementById('confirmPassword').value,
+        mother_name: document.getElementById('motherName').value,
+        date_of_birth: document.getElementById('dob').value,
+        favorite_color: document.getElementById('favoriteColor').value
+    };
+
+    // Validation
+    if (formData.password.length < 8) {
+        showAlert('Password must be at least 8 characters long', 'danger');
+        return;
+    }
+
+    if (formData.password !== formData.confirm_password) {
+        showAlert('Passwords do not match', 'danger');
+        return;
+    }
+
+    try {
+        const response = await fetch('{{ url_for("register") }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            showAlert(data.message, 'success');
+            setTimeout(() => {
+                window.location.href = '{{ url_for("login") }}';
+            }, 1500);
+        } else {
+            showAlert(data.error, 'danger');
+        }
+    } catch (error) {
+        showAlert('An error occurred. Please try again.', 'danger');
+    }
+});
+
+// Password strength meter
+document.getElementById('password').addEventListener('input', function() {
+    const password = this.value;
+    let strength = 0;
+    let text = 'Very Weak';
+    let color = '#dc3545';
+
+    if (password.length >= 6) strength += 20;
+    if (password.length >= 10) strength += 20;
+    if (password.length >= 14) strength += 20;
+    if (/[a-z]/.test(password) && /[A-Z]/.test(password)) strength += 20;
+    if (/\d/.test(password)) strength += 10;
+    if (/[^A-Za-z\d]/.test(password)) strength += 10;
+
+    strength = Math.min(strength, 100);
+
+    if (strength < 20) {
+        text = 'Very Weak';
+        color = '#dc3545';
+    } else if (strength < 40) {
+        text = 'Weak';
+        color = '#fd7e14';
+    } else if (strength < 60) {
+        text = 'Medium';
+        color = '#ffc107';
+    } else if (strength < 80) {
+        text = 'Strong';
+        color = '#28a745';
+    } else {
+        text = 'Very Strong';
+        color = '#20c997';
+    }
+
+    document.getElementById('strengthBar').style.width = strength + '%';
+    document.getElementById('strengthBar').style.backgroundColor = color;
+    document.getElementById('strengthText').textContent = 'Password strength: ' + text;
+});
+
+// Show/Hide Password Toggle
+const passwordInput = document.getElementById('password');
+const togglePasswordBtn = document.getElementById('togglePasswordBtn');
+
+passwordInput.addEventListener('input', function() {
+    // Show toggle button when password field has value
+    if (this.value.length > 0) {
+        togglePasswordBtn.style.display = 'block';
+    } else {
+        togglePasswordBtn.style.display = 'none';
+    }
+});
+
+togglePasswordBtn.addEventListener('click', function(e) {
+    e.preventDefault();
+    const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+    passwordInput.setAttribute('type', type);
+    
+    // Toggle eye icon
+    const icon = this.querySelector('i');
+    if (type === 'text') {
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+    } else {
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
+    }
+});
+
+// Show/Hide Confirm Password Toggle
+const confirmPasswordInput = document.getElementById('confirmPassword');
+const toggleConfirmPasswordBtn = document.getElementById('toggleConfirmPasswordBtn');
+
+confirmPasswordInput.addEventListener('input', function() {
+    // Show toggle button when confirm password field has value
+    if (this.value.length > 0) {
+        toggleConfirmPasswordBtn.style.display = 'block';
+    } else {
+        toggleConfirmPasswordBtn.style.display = 'none';
+    }
+});
+
+toggleConfirmPasswordBtn.addEventListener('click', function(e) {
+    e.preventDefault();
+    const type = confirmPasswordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+    confirmPasswordInput.setAttribute('type', type);
+    
+    // Toggle eye icon
+    const icon = this.querySelector('i');
+    if (type === 'text') {
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+    } else {
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
+    }
+});
+
+function showAlert(message, type) {
+    const alertContainer = document.getElementById('alertContainer');
+    alertContainer.innerHTML = `<div class="alert alert-${type} alert-dismissible fade show" role="alert">
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>`;
+}
+</script>
+
+<style>
+.auth-page {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.auth-card {
+    background: white;
+    border-radius: 20px;
+    padding: 2.5rem;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(10px);
+}
+
+.auth-header h2 {
+    color: #667eea;
+    font-weight: 700;
+}
+
+.strength-bar {
+    height: 8px;
+    background: #e9ecef;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.strength-fill {
+    height: 100%;
+    transition: width 0.3s ease, background-color 0.3s ease;
+}
+
+.form-control {
+    border: 2px solid #e9ecef;
+    border-radius: 10px;
+}
+
+.form-control:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    border-radius: 10px;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+}
+</style>
+{% endblock %}

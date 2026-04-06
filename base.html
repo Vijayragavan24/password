@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Password Detection Tool{% endblock %}</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <!-- AOS Animation Library -->
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark custom-navbar sticky-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{{ url_for('welcome') }}">
+                <i class="fas fa-lock"></i> PassChecker Pro
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    {% if current_user.is_authenticated %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('password_tool') }}">
+                                <i class="fas fa-shield-alt"></i> Password Tool
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('dashboard') }}">
+                                <i class="fas fa-chart-pie"></i> Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('profile') }}">
+                                <i class="fas fa-user-circle"></i> Profile
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('view_contact_messages') }}">
+                                <i class="fas fa-envelope-open-text"></i> Messages
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" onclick="showLogoutConfirmation(event)">
+                                <i class="fas fa-sign-out-alt"></i> Logout
+                            </a>
+                        </li>
+                    {% else %}
+                        <li class="nav-item me-2">
+                            <a href="{{ url_for('login') }}" class="btn btn-login">
+                                <i class="fas fa-sign-in-alt"></i> Login
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Logout Confirmation Modal -->
+    <div id="logoutConfirmationModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 3000; justify-content: center; align-items: center; padding: 2rem;">
+        <div style="background: white; border-radius: 20px; padding: 2rem; max-width: 400px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3); text-align: center;">
+            <h4 style="color: #333; font-weight: 700; margin-bottom: 1rem;"><i class="fas fa-sign-out-alt" style="color: #667eea;"></i> Confirm Logout</h4>
+            <p style="color: #666; font-size: 1rem; margin-bottom: 2rem;">Are you sure you want to logout? You'll need to login again to access your account.</p>
+            <div style="display: flex; gap: 1rem;">
+                <button onclick="closeLogoutConfirmation()" class="btn btn-secondary flex-grow-1" style="font-weight: 600;">
+                    <i class="fas fa-times"></i> No, Stay
+                </button>
+                <button onclick="confirmLogout()" class="btn btn-danger flex-grow-1" style="font-weight: 600;">
+                    <i class="fas fa-sign-out-alt"></i> Yes, Logout
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer bg-dark text-white text-center py-3">
+        <div class="container">
+            <div class="social-links">
+                <a href="https://github.com" target="_blank" class="text-white me-3" title="GitHub"><i class="fab fa-github fa-lg"></i></a>
+                <a href="https://www.linkedin.com/company/password-detection-tool/" target="_blank" class="text-white me-3" title="LinkedIn"><i class="fab fa-linkedin fa-lg"></i></a>
+                <a href="https://twitter.com/PasswordToolApp" target="_blank" class="text-white" title="Twitter"><i class="fab fa-twitter fa-lg"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    
+    <script>
+        AOS.init({
+            duration: 1000,
+            once: true
+        });
+
+        // Logout confirmation functions
+        function showLogoutConfirmation(event) {
+            event.preventDefault();
+            const modal = document.getElementById('logoutConfirmationModal');
+            modal.style.display = 'flex';
+            return false;
+        }
+
+        function closeLogoutConfirmation() {
+            document.getElementById('logoutConfirmationModal').style.display = 'none';
+        }
+
+        function confirmLogout() {
+            // Navigate to logout endpoint
+            window.location.href = '{{ url_for("logout") }}';
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('logoutConfirmationModal').addEventListener('click', function(event) {
+            if (event.target === this) {
+                closeLogoutConfirmation();
+            }
+        });
+
+        // Contact form validation and submission
+        function handleContactSubmit(event) {
+            event.preventDefault();
+            
+            const name = document.getElementById('contactName').value.trim();
+            const email = document.getElementById('contactEmail').value.trim();
+            const message = document.getElementById('contactMessage').value.trim();
+            
+            // Clear previous errors
+            document.getElementById('nameError').textContent = '';
+            document.getElementById('emailError').textContent = '';
+            document.getElementById('messageError').textContent = '';
+            
+            let isValid = true;
+            
+            // Validate name
+            if (name.length < 2) {
+                document.getElementById('nameError').textContent = 'Name must be at least 2 characters';
+                isValid = false;
+            }
+            
+            // Validate email
+            const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            if (!emailRegex.test(email)) {
+                document.getElementById('emailError').textContent = 'Please enter a valid email address';
+                isValid = false;
+            }
+            
+            // Validate message
+            if (message.length < 5) {
+                document.getElementById('messageError').textContent = 'Message must be at least 5 characters';
+                isValid = false;
+            }
+            
+            if (!isValid) return;
+            
+            // Disable button and show loading state
+            const submitBtn = document.getElementById('submitBtn');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+            
+            // Submit form
+            fetch('{{ url_for("submit_contact") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    name: name,
+                    email: email,
+                    message: message
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Show success message
+                    document.getElementById('contactForm').style.display = 'none';
+                    document.getElementById('successMessage').style.display = 'block';
+                    document.getElementById('successText').textContent = data.message;
+                } else {
+                    alert('Error: ' + (data.error || 'An error occurred'));
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalText;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred. Please try again later.');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
+            });
+        }
+        
+        // Reset contact form
+        function resetContactForm() {
+            document.getElementById('contactForm').reset();
+            document.getElementById('contactForm').style.display = 'block';
+            document.getElementById('successMessage').style.display = 'none';
+            
+            // Clear errors
+            document.getElementById('nameError').textContent = '';
+            document.getElementById('emailError').textContent = '';
+            document.getElementById('messageError').textContent = '';
+            
+            // Reset submit button
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Send Message';
+        }
+    </script>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

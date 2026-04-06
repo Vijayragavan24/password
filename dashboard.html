@@ -1,0 +1,461 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Password Detection Tool{% endblock %}
+
+{% block content %}
+<div class="dashboard-page " style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); width: 100%; flex: 1; padding: 2rem 0;">
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Main Content -->
+            <div class="col-12">
+                <div class="dashboard-header mb-4" data-aos="fade-up">
+                    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
+                        <div>
+                            <h1 class="text-white">
+                                <i class="fas fa-chart-line"></i> Dashboard
+                            </h1>
+                            <p class="text-white-50">Welcome back, {{ user.username }}!</p>
+                        </div>
+                        <div style="display: flex; gap: 1rem;">
+                            <button onclick="refreshCharts()" class="btn btn-light" style="height: fit-content;">
+                                <i class="fas fa-sync-alt"></i> Refresh Data
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Extended Analytics -->
+                <div class="row mb-4">
+                    <div class="col-lg-6 mb-4" data-aos="fade-up">
+                        <div class="chart-card">
+                            <h6 class="chart-title">Breach Status Analysis</h6>
+                            <div class="chart-container">
+                                <canvas id="breachChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6 mb-4" data-aos="fade-up">
+                        <div class="chart-card">
+                            <h6 class="chart-title">Detailed Strength Analysis</h6>
+                            <div class="chart-container">
+                                <canvas id="categoriesChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts -->
+                <div class="row">
+                    <div class="col-lg-6 mb-4" data-aos="fade-up">
+                        <div class="chart-card">
+                            <h6 class="chart-title">Password Strength Distribution</h6>
+                            <div class="chart-container">
+                                <canvas id="strengthChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6 mb-4" data-aos="fade-up">
+                        <div class="chart-card">
+                            <h6 class="chart-title">Security Status</h6>
+                            <div class="chart-container">
+                                <canvas id="securityChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="row mb-4" data-aos="fade-up">
+                    <div class="col-12">
+                        <div class="quick-actions-card">
+                            <h6 class="mb-3">Navigation</h6>
+                            <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                                <a href="{{ url_for('password_tool') }}" class="btn btn-primary me-2 mb-2" style="background: rgba(102, 126, 234, 0.9); border: none;">
+                                    <i class="fas fa-arrow-left"></i> Back to Password Tool
+                                </a>
+                                <a href="{{ url_for('profile') }}" class="btn btn-primary mb-2" style="background: rgba(102, 126, 234, 0.9); border: none;">
+                                    <i class="fas fa-arrow-right"></i> Go to Profile
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Navigate to password tool page with filter
+function goToPasswordTool(filterType = 'all') {
+    window.location.href = '{{ url_for("password_tool") }}?filter=' + filterType;
+}
+
+// Fetch statistics
+async function fetchStatistics() {
+    try {
+        const response = await fetch('{{ url_for("statistics") }}');
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        console.log('Statistics fetched:', data.statistics);
+        return data.statistics || {};
+    } catch (error) {
+        console.error('Error fetching statistics:', error);
+        return {
+            'Very Strong': 0,
+            'Strong': 0,
+            'Medium': 0,
+            'Weak': 0,
+            'Very Weak': 0
+        };
+    }
+}
+
+// Fetch breached count
+async function fetchBreachedCount() {
+    try {
+        const response = await fetch('/api/password-history');
+        const data = await response.json();
+        console.log('Password history data:', data);
+        if (data.success && data.history && Array.isArray(data.history)) {
+            const breachedCount = data.history.filter(record => {
+                // Handle both Boolean and Integer values
+                return record.breach_status == true || record.breach_status === 1;
+            }).length;
+            console.log('Filtered breached count:', breachedCount);
+            return breachedCount;
+        }
+    } catch (error) {
+        console.error('Error fetching breached count:', error);
+    }
+    return 0;
+}
+
+// Initialize charts
+async function initCharts() {
+    try {
+        console.log('Initializing charts...');
+        const stats = await fetchStatistics();
+        console.log('Stats received:', stats);
+        const breachedCount = await fetchBreachedCount();
+        console.log('Breached count:', breachedCount);
+
+        // Strength Chart
+        const strengthCtx = document.getElementById('strengthChart').getContext('2d');
+        new Chart(strengthCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Very Strong', 'Strong', 'Medium', 'Weak', 'Very Weak'],
+                datasets: [{
+                    data: [
+                        stats['Very Strong'] || 0,
+                        stats['Strong'] || 0,
+                        stats['Medium'] || 0,
+                        stats['Weak'] || 0,
+                        stats['Very Weak'] || 0
+                    ],
+                    backgroundColor: [
+                        '#20c997',
+                        '#28a745',
+                        '#ffc107',
+                        '#fd7e14',
+                        '#dc3545'
+                    ],
+                    borderColor: '#fff',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+
+        // Security Chart
+        const securityCtx = document.getElementById('securityChart').getContext('2d');
+        new Chart(securityCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Very Strong', 'Strong', 'Medium', 'Weak', 'Very Weak'],
+                datasets: [{
+                    label: 'Password Count',
+                    data: [
+                        stats['Very Strong'] || 0,
+                        stats['Strong'] || 0,
+                        stats['Medium'] || 0,
+                        stats['Weak'] || 0,
+                        stats['Very Weak'] || 0
+                    ],
+                    backgroundColor: [
+                        '#20c997',
+                        '#28a745',
+                        '#ffc107',
+                        '#fd7e14',
+                        '#dc3545'
+                    ]
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1
+                        }
+                    }
+                }
+            }
+        });
+
+        // Breach Status Chart
+        const breachCtx = document.getElementById('breachChart').getContext('2d');
+        const totalCount = (stats['Very Strong'] || 0) + (stats['Strong'] || 0) + (stats['Medium'] || 0) + (stats['Weak'] || 0) + (stats['Very Weak'] || 0);
+        const safeCount = totalCount - breachedCount;
+        
+        console.log(`Breach Analysis: Total=${totalCount}, Safe=${safeCount}, Breached=${breachedCount}`);
+        
+        new Chart(breachCtx, {
+            type: 'pie',
+            data: {
+                labels: ['Safe Passwords', 'Breached Passwords'],
+                datasets: [{
+                    data: [safeCount, breachedCount],
+                    backgroundColor: ['#28a745', '#dc3545'],
+                    borderColor: '#fff',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+
+        // Categories Chart
+        const categoriesCtx = document.getElementById('categoriesChart').getContext('2d');
+        
+        new Chart(categoriesCtx, {
+            type: 'line',
+            data: {
+                labels: ['Very Strong', 'Strong', 'Medium', 'Weak', 'Very Weak'],
+                datasets: [{
+                    label: 'Password Count',
+                    data: [
+                        stats['Very Strong'] || 0,
+                        stats['Strong'] || 0,
+                        stats['Medium'] || 0,
+                        stats['Weak'] || 0,
+                        stats['Very Weak'] || 0
+                    ],
+                    borderColor: '#667eea',
+                    backgroundColor: 'rgba(102, 126, 234, 0.15)',
+                    borderWidth: 3,
+                    pointRadius: 7,
+                    pointBackgroundColor: ['#20c997', '#28a745', '#ffc107', '#fd7e14', '#dc3545'],
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 2.5,
+                    pointHoverRadius: 9,
+                    tension: 0.5,
+                    fill: true,
+                    spanGaps: false
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1
+                        },
+                        grid: {
+                            color: 'rgba(102, 126, 234, 0.1)',
+                            drawBorder: false
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false,
+                            drawBorder: false
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top',
+                        labels: {
+                            boxWidth: 12,
+                            padding: 15,
+                            font: {
+                                size: 12,
+                                weight: '600'
+                            },
+                            color: '#333'
+                        }
+                    }
+                },
+                interaction: {
+                    intersect: false,
+                    mode: 'index'
+                }
+            }
+        });
+        console.log('Charts initialized successfully');
+    } catch (error) {
+        console.error('Error initializing charts:', error);
+    }
+}
+
+
+// Function to refresh charts with new data
+function refreshCharts() {
+    const btn = event.target.closest('button');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Refreshing...';
+    
+    // Destroy existing instances if any
+    window.charts = window.charts || {};
+    Object.values(window.charts).forEach(chart => {
+        if (chart) chart.destroy();
+    });
+    
+    // Reinitialize charts with fresh data
+    initCharts().then(() => {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-sync-alt"></i> Refresh Data';
+        console.log('Charts refreshed successfully');
+    }).catch(error => {
+        console.error('Error refreshing charts:', error);
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-sync-alt"></i> Refresh Data';
+    });
+}
+
+window.addEventListener('load', initCharts);
+</script>
+
+<style>
+.btn-back-dashboard {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    text-decoration: none;
+    border-radius: 25px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    font-size: 1rem;
+}
+
+.btn-back-dashboard:hover {
+    background: rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.5);
+    transform: translateX(-5px);
+    color: white;
+}
+
+.stat-card {
+    background: white;
+    border-radius: 15px;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    min-height: 180px;
+    text-align: center;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+}
+
+.stat-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.5rem;
+    margin-right: 0;
+    margin-bottom: 1rem;
+}
+
+.stat-label {
+    color: #999;
+    font-size: 0.85rem;
+    margin-bottom: 0.5rem;
+}
+
+.stat-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #333;
+}
+
+.chart-card {
+    background: white;
+    border-radius: 15px;
+    padding: 1.5rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.chart-container {
+    flex-grow: 1;
+    position: relative;
+    height: 350px;
+}
+
+.chart-container canvas {
+    max-height: 350px;
+}
+
+.chart-title {
+    color: #333;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.quick-actions-card {
+    background: white;
+    border-radius: 15px;
+    padding: 1.5rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.dashboard-header h1 {
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+</style>
+{% endblock %}

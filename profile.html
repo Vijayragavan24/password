@@ -1,0 +1,192 @@
+{% extends "base.html" %}
+
+{% block title %}Profile - Password Detection Tool{% endblock %}
+
+{% block content %}
+<div class="profile-page" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 2rem 0;">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8" data-aos="fade-up">
+                <div class="profile-card">
+                    <div class="profile-header">
+                        <div class="avatar">
+                            <i class="fas fa-user-circle fa-5x"></i>
+                        </div>
+                        <h2>{{ user.username }}</h2>
+                        <p class="text-muted">{{ user.email }}</p>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <div class="profile-content">
+                        <h4 class="mb-4">
+                            <i class="fas fa-info-circle"></i> Account Information
+                        </h4>
+
+                        <div class="row mb-4">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label text-muted">Username</label>
+                                <input type="text" class="form-control" value="{{ user.username }}" disabled>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label text-muted">Email</label>
+                                <input type="email" class="form-control" value="{{ user.email }}" disabled>
+                            </div>
+                        </div>
+
+                        <h4 class="mb-4 mt-5">
+                            <i class="fas fa-shield-alt"></i> Security Questions
+                        </h4>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label text-muted">Mother's Name</label>
+                                <input type="text" class="form-control" value="{{ user.mother_name }}" disabled>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label text-muted">Date of Birth</label>
+                                <input type="date" class="form-control" value="{{ user.date_of_birth }}" disabled>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label text-muted">Favorite Color</label>
+                            <input type="text" class="form-control" value="{{ user.favorite_color }}" disabled>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <h4 class="mb-4">
+                            <i class="fas fa-calendar"></i> Account Details
+                        </h4>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label text-muted">Created At</label>
+                                <input type="text" class="form-control" value="{{ user.created_at.strftime('%Y-%m-%d %H:%M') }}" disabled>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label text-muted">Last Updated</label>
+                                <input type="text" class="form-control" value="{{ user.updated_at.strftime('%Y-%m-%d %H:%M') }}" disabled>
+                            </div>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <div class="action-buttons" style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                            <a href="{{ url_for('dashboard') }}" class="btn btn-primary">
+                                <i class="fas fa-arrow-left"></i> Back to Dashboard
+                            </a>
+                            <a href="{{ url_for('view_contact_messages') }}" class="btn btn-primary" style="background: rgba(102, 126, 234, 0.9); border: none;">
+                                <i class="fas fa-arrow-right"></i> Next to Messages
+                            </a>
+                            <a href="{{ url_for('logout') }}" class="btn btn-danger">
+                                <i class="fas fa-sign-out-alt"></i> Logout
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.btn-back-profile {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background: rgba(102, 126, 234, 0.2);
+    color: #667eea;
+    text-decoration: none;
+    border-radius: 25px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    border: 2px solid rgba(102, 126, 234, 0.3);
+    font-size: 0.95rem;
+}
+
+.btn-back-profile:hover {
+    background: rgba(102, 126, 234, 0.3);
+    border-color: rgba(102, 126, 234, 0.5);
+    transform: translateX(-5px);
+    color: #667eea;
+}
+
+.profile-card {
+    background: white;
+    border-radius: 15px;
+    padding: 2.5rem;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.profile-header {
+    text-align: center;
+    margin-bottom: 1rem;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    word-break: break-word;
+}
+
+.profile-header p {
+    max-width: 100%;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    white-space: normal;
+}
+
+.avatar {
+    color: #667eea;
+    margin-bottom: 1rem;
+}
+
+.profile-header h2 {
+    color: #333;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.profile-content h4 {
+    color: #333;
+    font-weight: 600;
+}
+
+.form-control:disabled {
+    background-color: #f8f9fa;
+    border-color: #e9ecef;
+    color: #495057;
+}
+
+.form-label {
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    border-radius: 10px;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+}
+
+.btn-danger {
+    background: #e74c3c;
+    border: none;
+    border-radius: 10px;
+}
+
+.btn-danger:hover {
+    background: #c0392b;
+}
+</style>
+{% endblock %}

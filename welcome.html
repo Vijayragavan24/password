@@ -1,0 +1,273 @@
+{% extends "base.html" %}
+
+{% block title %}Welcome - Password Detection Tool{% endblock %}
+
+{% block content %}
+<div class="welcome-page">
+    <!-- Hero Section -->
+    <section class="hero-section" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; display: flex; align-items: center; position: relative; overflow: hidden;">
+        <!-- Animated Background -->
+        <div class="animated-bg"></div>
+        
+        <div class="container position-relative z-1">
+            <div class="row align-items-center">
+                <div class="col-lg-6" data-aos="fade-right">
+                    <h1 class="display-4 fw-bold text-white mb-4 hero-title">
+                        Secure Your Digital Life
+                    </h1>
+                    <p class="lead text-white-50 mb-5">
+                        Check password strength, detect breaches, and get real-time security recommendations to protect your accounts.
+                    </p>
+                    <div class="hero-buttons">
+                        <a href="{{ url_for('register') }}" class="btn btn-light btn-lg hover-lift d-flex align-items-center justify-content-center mb-3" style="min-width: 200px;">
+                            <i class="fas fa-rocket" style="margin-right: 8px;"></i>
+                            <span>Sign Up</span>
+                        </a>
+                        <a href="{{ url_for('login') }}" class="btn btn-outline-light btn-lg hover-lift d-flex align-items-center justify-content-center" style="min-width: 200px;">
+                            <i class="fas fa-sign-in-alt" style="margin-right: 8px;"></i>
+                            <span>Sign In</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg-6" data-aos="fade-left">
+                    <div class="hero-animation">
+                        <div class="security-icon animate-float">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features-section py-5" style="background: #f8f9fa;">
+        <div class="container">
+            <h2 class="text-center mb-5" data-aos="fade-up">
+                <span class="gradient-text">Powerful Features</span>
+            </h2>
+            
+            <div class="row">
+                <div class="col-md-6 col-lg-3 mb-4" data-aos="flip-left">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-magic"></i>
+                        </div>
+                        <h5>Password Generator</h5>
+                        <p>Create strong, random passwords instantly tailored to your needs</p>
+                    </div>
+                </div>
+                
+                <div class="col-md-6 col-lg-3 mb-4" data-aos="flip-left" data-aos-delay="100">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <h5>Breach Detection</h5>
+                        <p>Check if your password has been found in data breaches</p>
+                    </div>
+                </div>
+                
+                <div class="col-md-6 col-lg-3 mb-4" data-aos="flip-left" data-aos-delay="100">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-cogs"></i>
+                        </div>
+                        <h5>Recommendations</h5>
+                        <p>Get actionable security tips to strengthen your passwords</p>
+                    </div>
+                </div>
+                
+                <div class="col-md-6 col-lg-3 mb-4" data-aos="flip-left" data-aos-delay="200">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-chart-bar"></i>
+                        </div>
+                        <h5>Statistics</h5>
+                        <p>Track your password history and security trends</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="how-it-works py-5">
+        <div class="container">
+            <h2 class="text-center mb-5" data-aos="fade-up">
+                <span class="gradient-text">How It Works</span>
+            </h2>
+            
+            <div class="row">
+                <div class="col-lg-8 offset-lg-2">
+                    <div class="steps-timeline">
+                        <div class="step" data-aos="fade-right">
+                            <div class="step-number">1</div>
+                            <div class="step-content">
+                                <h4>Create Account</h4>
+                                <p>Sign up with your email and set security questions</p>
+                            </div>
+                        </div>
+                        
+                        <div class="step" data-aos="fade-right" data-aos-delay="100">
+                            <div class="step-number">2</div>
+                            <div class="step-content">
+                                <h4>Login Securely</h4>
+                                <p>Access your dashboard with encrypted authentication</p>
+                            </div>
+                        </div>
+                        
+                        <div class="step" data-aos="fade-right" data-aos-delay="200">
+                            <div class="step-number">3</div>
+                            <div class="step-content">
+                                <h4>Analyze Passwords</h4>
+                                <p>Check password strength with detailed analysis</p>
+                            </div>
+                        </div>
+                        
+                        <div class="step" data-aos="fade-right" data-aos-delay="300">
+                            <div class="step-number">4</div>
+                            <div class="step-content">
+                                <h4>Stay Secure</h4>
+                                <p>Follow recommendations and track your security progress</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Security Tips -->
+    <section class="security-tips py-5" style="background: #f8f9fa;">
+        <div class="container">
+            <h2 class="text-center mb-5" data-aos="fade-up">
+                <span class="gradient-text">Security Tips</span>
+            </h2>
+            
+            <div class="row">
+                <div class="col-md-6 mb-4" data-aos="fade-up">
+                    <div class="tip-card">
+                        <div class="tip-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <h5>Use Long Passwords</h5>
+                        <p>Aim for at least 12 characters combining uppercase, lowercase, numbers, and symbols</p>
+                    </div>
+                </div>
+                
+                <div class="col-md-6 mb-4" data-aos="fade-up">
+                    <div class="tip-card">
+                        <div class="tip-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <h5>Avoid Personal Info</h5>
+                        <p>Don't use birthdays, names, or common patterns in your passwords</p>
+                    </div>
+                </div>
+                
+                <div class="col-md-6 mb-4" data-aos="fade-up">
+                    <div class="tip-card">
+                        <div class="tip-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <h5>Unique Passwords</h5>
+                        <p>Use different passwords for different accounts and services</p>
+                    </div>
+                </div>
+                
+                <div class="col-md-6 mb-4" data-aos="fade-up">
+                    <div class="tip-card">
+                        <div class="tip-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <h5>Regular Updates</h5>
+                        <p>Change passwords regularly and after any security breaches</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 5rem 2rem;">
+        <div class="container text-center" data-aos="zoom-in">
+            <h2 class="mb-4">Ready to Secure Your Accounts?</h2>
+            <p class="mb-4 fs-5">Join thousands of users protecting their digital security today</p>
+            <a href="{{ url_for('register') }}" class="btn btn-light btn-lg d-flex align-items-center justify-content-center" style="width: fit-content; margin: 0 auto;">
+                <i class="fas fa-user-plus" style="margin-right: 8px;"></i>
+                <span>Create Account Now</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- Contact/Feedback Section -->
+    <section class="contact-section" id="contactSection">
+        <div class="container">
+            <div class="contact-container">
+                <div class="contact-header">
+                    <h2><i class="fas fa-envelope"></i> Get in Touch</h2>
+                    <p>Have feedback or questions? We'd love to hear from you!</p>
+                </div>
+
+                <form class="contact-form" id="contactForm" onsubmit="handleContactSubmit(event)">
+                    <div class="form-group">
+                        <label for="contactName">Full Name</label>
+                        <input 
+                            type="text" 
+                            id="contactName" 
+                            name="name" 
+                            class="form-control" 
+                            placeholder="Your name"
+                            required
+                        >
+                        <small class="form-error" id="nameError"></small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="contactEmail">Email Address</label>
+                        <input 
+                            type="email" 
+                            id="contactEmail" 
+                            name="email" 
+                            class="form-control" 
+                            placeholder="your.email@example.com"
+                            required
+                        >
+                        <small class="form-error" id="emailError"></small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="contactMessage">Message</label>
+                        <textarea 
+                            id="contactMessage" 
+                            name="message" 
+                            class="form-control" 
+                            placeholder="Share your feedback or questions..."
+                            rows="5"
+                            required
+                        ></textarea>
+                        <small class="form-error" id="messageError"></small>
+                    </div>
+
+                    <button type="submit" class="btn-submit" id="submitBtn">
+                        <i class="fas fa-paper-plane"></i> Send Message
+                    </button>
+                </form>
+
+                <!-- Success Message -->
+                <div class="success-message" id="successMessage" style="display: none;">
+                    <div class="success-content">
+                        <i class="fas fa-check-circle"></i>
+                        <h3>Thank You!</h3>
+                        <p id="successText">Your message has been sent successfully. We'll get back to you soon!</p>
+                        <button type="button" class="btn-close-success" onclick="resetContactForm()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}

@@ -1,0 +1,682 @@
+{% extends "base.html" %}
+
+{% block title %}Login - Password Detection Tool{% endblock %}
+
+{% block content %}
+<div class="login-page">
+    <div class="container-fluid h-100">
+        <div class="row h-100 g-0">
+            <!-- Left Side - Branding & Features -->
+            <div class="col-lg-6 d-none d-lg-flex left-section" data-aos="fade-right">
+                <div class="w-100 px-5 d-flex flex-column justify-content-center">
+                    <!-- Logo & Branding -->
+                    <div class="brand-section mb-5">
+                        <div class="brand-logo mb-4">
+                            <i class="fas fa-lock-open"></i>
+                        </div>
+                        <h1 class="text-white display-4 fw-bold mb-3">PassChecker Pro</h1>
+                        <p class="text-white fs-6 opacity-75">Secure password analysis and management</p>
+                    </div>
+
+                    <!-- Features List with Equal Spacing -->
+                    <div class="features-list w-100 mt-5 pt-3">
+                        <!-- Feature 1 - Secure -->
+                        <div class="feature-item">
+                            <div class="feature-icon-container">
+                                <div class="feature-icon">
+                                    <i class="fas fa-shield-alt"></i>
+                                </div>
+                            </div>
+                            <div class="feature-content">
+                                <h5 class="text-white mb-2 fw-600">100% Secure</h5>
+                                <p class="text-white-50 small mb-0">Your data encrypted with industry standards</p>
+                            </div>
+                        </div>
+
+                        <!-- Feature 2 - Generator -->
+                        <div class="feature-item">
+                            <div class="feature-icon-container">
+                                <div class="feature-icon">
+                                    <i class="fas fa-magic"></i>
+                                </div>
+                            </div>
+                            <div class="feature-content">
+                                <h5 class="text-white mb-2 fw-600">Password Generator</h5>
+                                <p class="text-white-50 small mb-0">Generate strong passwords in one click</p>
+                            </div>
+                        </div>
+
+                        <!-- Feature 3 - History -->
+                        <div class="feature-item">
+                            <div class="feature-icon-container">
+                                <div class="feature-icon">
+                                    <i class="fas fa-chart-line"></i>
+                                </div>
+                            </div>
+                            <div class="feature-content">
+                                <h5 class="text-white mb-2 fw-600">Track History</h5>
+                                <p class="text-white-50 small mb-0">Monitor your password security progress</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Side - Login Form -->
+            <div class="col-lg-6 right-section d-flex align-items-center" style="min-height: 100vh;">
+                <div class="w-100 px-4 px-md-5" data-aos="fade-left">
+                    <div class="login-container">
+                        <!-- Form Header -->
+                        <div class="form-header text-center mb-5">
+                            <div class="header-icon mb-4">
+                                <i class="fas fa-sign-in-alt"></i>
+                            </div>
+                            <h2 class="fw-bold mb-2">Welcome Back</h2>
+                            <p class="text-muted">Sign in to access your password tools</p>
+                        </div>
+
+                        <!-- Alert Messages -->
+                        <div id="alertContainer" class="mb-4"></div>
+
+                        <!-- Login Form -->
+                        <form id="loginForm">
+                            <!-- Username/Email Input -->
+                            <div class="form-group mb-4">
+                                <label for="username" class="form-label fw-600">Username or Email</label>
+                                <div class="input-wrapper">
+                                    <input 
+                                        type="text" 
+                                        class="form-control form-input" 
+                                        id="username" 
+                                        name="username" 
+                                        placeholder="Enter your username or email"
+                                        required
+                                        autocomplete="username"
+                                    >
+                                    <span class="input-icon">
+                                        <i class="fas fa-user"></i>
+                                    </span>
+                                </div>
+                                <small class="form-text text-muted mt-2 d-block">
+                                    <i class="fas fa-info-circle me-1"></i>Use your username or email address
+                                </small>
+                            </div>
+
+                            <!-- Password Input -->
+                            <div class="form-group mb-4">
+                                <label for="password" class="form-label fw-600">Password</label>
+                                <div class="input-wrapper" style="position: relative;">
+                                    <input 
+                                        type="password" 
+                                        class="form-control form-input" 
+                                        id="password" 
+                                        name="password" 
+                                        placeholder="Enter your password"
+                                        required
+                                        autocomplete="current-password"
+                                    >
+                                    <span class="input-icon">
+                                        <i class="fas fa-lock"></i>
+                                    </span>
+                                    <button 
+                                        type="button" 
+                                        id="togglePasswordBtn" 
+                                        class="toggle-password-btn"
+                                        title="Show/Hide password"
+                                        style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #667eea; cursor: pointer; font-size: 1.1rem; display: none; padding: 0.5rem;"
+                                    >
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Remember Me & Forgot Password -->
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <div class="form-check">
+                                    <input 
+                                        class="form-check-input" 
+                                        type="checkbox" 
+                                        id="remember" 
+                                        name="remember"
+                                    >
+                                    <label class="form-check-label" for="remember">
+                                        Remember me
+                                    </label>
+                                </div>
+                                <a href="{{ url_for('forgot_password') }}" class="forgot-link">
+                                    Forgot password?
+                                </a>
+                            </div>
+
+                            <!-- Submit Button -->
+                            <button 
+                                type="submit" 
+                                class="btn btn-primary btn-lg w-100 mb-4 login-btn" 
+                                id="loginBtn"
+                            >
+                                <i class="fas fa-unlock me-2"></i><span id="btnText">Login</span>
+                            </button>
+
+                            <!-- Sign Up Link -->
+                            <div class="text-center mb-4">
+                                <p class="text-muted">
+                                    Don't have an account? 
+                                    <a href="{{ url_for('register') }}" class="text-primary fw-bold" style="text-decoration: none;">
+                                        Sign Up
+                                    </a>
+                                </p>
+                            </div>
+                        </form>
+
+                        <!-- Security Text -->
+                        <div class="text-center">
+                            <p class="text-muted small mt-4 security-text">
+                                <i class="fas fa-shield-alt me-2"></i>
+                                Your data is encrypted and secure
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Initialize AOS
+if (typeof AOS !== 'undefined') {
+    AOS.init({ duration: 800, once: true });
+}
+
+// Form Submission
+document.getElementById('loginForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const loginBtn = document.getElementById('loginBtn');
+    const btnText = document.getElementById('btnText');
+    const originalText = 'Login';
+    
+    // Get form data
+    const formData = {
+        username: document.getElementById('username').value.trim(),
+        password: document.getElementById('password').value,
+        remember: document.getElementById('remember').checked
+    };
+
+    // Validate form
+    if (!formData.username || !formData.password) {
+        showAlert('Please fill in all fields', 'danger');
+        return;
+    }
+
+    // Disable button and show loading state
+    loginBtn.disabled = true;
+    btnText.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Signing in...';
+
+    try {
+        const response = await fetch('{{ url_for("login") }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            showAlert('✅ ' + data.message, 'success');
+            setTimeout(() => {
+                window.location.href = '{{ url_for("password_tool") }}';
+            }, 1500);
+        } else {
+            showAlert('❌ ' + data.error, 'danger');
+            loginBtn.disabled = false;
+            btnText.textContent = originalText;
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        showAlert('❌ An error occurred. Please try again.', 'danger');
+        loginBtn.disabled = false;
+        btnText.textContent = originalText;
+    }
+});
+
+// Show Alert Function
+function showAlert(message, type) {
+    const alertContainer = document.getElementById('alertContainer');
+    const icon = type === 'success' ? 'check-circle' : 'exclamation-circle';
+    
+    alertContainer.innerHTML = `
+        <div class="alert alert-${type} alert-dismissible fade show d-flex align-items-center" role="alert">
+            <i class="fas fa-${icon} me-2"></i>
+            <div>${message}</div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    `;
+}
+
+// Real-time validation
+document.getElementById('username').addEventListener('blur', function() {
+    if (this.value.trim()) {
+        this.classList.add('is-valid');
+        this.classList.remove('is-invalid');
+    }
+});
+
+const passwordInput = document.getElementById('password');
+const togglePasswordBtn = document.getElementById('togglePasswordBtn');
+
+// Show/Hide Password Toggle
+passwordInput.addEventListener('input', function() {
+    // Show toggle button when password field has value
+    if (this.value.length > 0) {
+        togglePasswordBtn.style.display = 'block';
+    } else {
+        togglePasswordBtn.style.display = 'none';
+    }
+});
+
+togglePasswordBtn.addEventListener('click', function(e) {
+    e.preventDefault();
+    const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+    passwordInput.setAttribute('type', type);
+    
+    // Toggle eye icon
+    const icon = this.querySelector('i');
+    if (type === 'text') {
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+    } else {
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
+    }
+});
+
+passwordInput.addEventListener('blur', function() {
+    if (this.value) {
+        this.classList.add('is-valid');
+        this.classList.remove('is-invalid');
+    }
+});
+</script>
+
+<style>
+.login-page {
+    min-height: 100vh;
+    background: #f8f9fa;
+    margin: 0;
+    padding: 0;
+}
+
+.login-page .container-fluid {
+    padding: 0;
+    margin: 0;
+}
+
+.login-page .row {
+    margin: 0;
+    padding: 0;
+}
+
+.login-page [class*='col-'] {
+    padding: 0;
+    margin: 0;
+}
+
+.left-section {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    margin: 0;
+    padding: 0;
+    display: flex !important;
+}
+
+.left-section .w-100 {
+    padding: 3rem 2rem 3rem 2.5rem;
+}
+
+@media (min-width: 1200px) {
+    .left-section .w-100 {
+        padding: 3rem 3rem 3rem 3rem;
+    }
+}
+
+.feature-item {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.feature-icon-container {
+    display: flex;
+    align-items: flex-start;
+    flex-shrink: 0;
+}
+
+.feature-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.5rem;
+}
+
+.feature-content h5 {
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.feature-content p {
+    font-size: 0.95rem;
+    margin: 0;
+}
+
+.right-section {
+    background: white;
+    margin: 0;
+    padding: 0;
+    display: flex !important;
+    align-items: center !important;
+    min-height: 100vh;
+    border-left: none;
+}
+
+.right-section .w-100 {
+    padding: 2rem 1.5rem;
+    margin: 0;
+}
+
+@media (min-width: 992px) {
+    .right-section .w-100 {
+        padding: 2rem 3rem;
+    }
+}
+
+@media (min-width: 1200px) {
+    .right-section .w-100 {
+        padding: 2rem 3.5rem;
+    }
+}
+
+.login-container {
+    max-width: 450px;
+    margin: 0 auto;
+}
+
+.form-header {
+    margin-bottom: 2.5rem;
+    text-align: center;
+}
+
+.form-header h2 {
+    color: #333;
+    font-weight: 700;
+    font-size: 1.75rem;
+    margin-bottom: 0.5rem;
+}
+
+.form-header p {
+    color: #757575;
+    font-size: 0.95rem;
+    margin: 0;
+}
+
+.header-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+    color: white;
+    font-size: 2rem;
+    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+}
+
+/* Responsive adjustments for mobile */
+@media (max-width: 991px) {
+    .login-page {
+        margin-top: 60px;
+    }
+    
+    .left-section {
+        display: none !important;
+    }
+    
+    .right-section {
+        min-height: auto;
+        margin-top: 0;
+        padding: 2rem;
+    }
+    
+    .right-section .w-100 {
+        padding: 1rem;
+    }
+}
+
+.form-label {
+    color: #333;
+    margin-bottom: 0.75rem;
+    font-weight: 600;
+    display: block;
+}
+
+.input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.form-input {
+    width: 100%;
+    border: 2px solid #e9ecef;
+    border-radius: 10px;
+    padding: 0.75rem 1rem 0.75rem 44px;
+    font-size: 1rem;
+    background: #f8f9fa;
+    transition: all 0.3s ease;
+    color: #333;
+}
+
+.form-input::placeholder {
+    color: #999;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: #667eea;
+    background: white;
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.15);
+}
+
+.form-input.is-valid {
+    border-color: #28a745;
+    background: white;
+}
+
+.form-input.is-valid:focus {
+    box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.15);
+}
+
+.input-icon {
+    position: absolute;
+    left: 14px;
+    color: #667eea;
+    font-size: 1rem;
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+}
+
+.form-check {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.form-check-input {
+    width: 1.25em;
+    height: 1.25em;
+    border: 2px solid #e9ecef;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.form-check-input:checked {
+    background-color: #667eea;
+    border-color: #667eea;
+}
+
+.form-check-input:focus {
+    outline: none;
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+}
+
+.form-check-label {
+    cursor: pointer;
+    user-select: none;
+    font-weight: 500;
+    color: #555;
+}
+
+.forgot-link {
+    color: #667eea;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.forgot-link:hover {
+    color: #764ba2;
+    text-decoration: underline;
+}
+
+.login-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    border-radius: 10px;
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+    color: white;
+    font-size: 1rem;
+    box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+}
+
+.login-btn:hover {
+    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 15px 35px rgba(102, 126, 234, 0.4);
+}
+
+.login-btn:disabled {
+    opacity: 0.85;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.register-btn {
+    border: 2px solid #667eea;
+    color: #667eea;
+    border-radius: 10px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    background: transparent;
+}
+
+.register-btn:hover {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-color: transparent;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+}
+
+.divider {
+    position: relative;
+    text-align: center;
+    color: #999;
+    margin: 1.5rem 0;
+}
+
+.divider::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    width: 100%;
+    height: 1px;
+    background: #e9ecef;
+    z-index: 0;
+}
+
+.divider-text {
+    position: relative;
+    background: white;
+    padding: 0 1rem;
+    z-index: 1;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.security-text {
+    color: #999 !important;
+    font-size: 0.9rem !important;
+}
+
+.alert {
+    border: 1px solid;
+    border-radius: 8px;
+    padding: 1rem;
+    font-size: 0.95rem;
+}
+
+.alert-success {
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+    color: #155724;
+}
+
+.alert-danger {
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+    color: #721c24;
+}
+
+.fw-600 {
+    font-weight: 600;
+}
+
+@media (max-width: 991px) {
+    .right-section {
+        padding: 2rem 1rem;
+    }
+    
+    .login-container {
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    .login-page {
+        flex-direction: column;
+    }
+    
+    .login-container {
+        max-width: 100%;
+    }
+    
+    .form-header h2 {
+        font-size: 1.5rem;
+    }
+}
+</style>
+{% endblock %}
